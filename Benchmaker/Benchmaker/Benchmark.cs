@@ -140,10 +140,9 @@ namespace Benchmaker
                     _sampling[_item.Key].Add(_stopwatch.ElapsedTicks);
                 }
             }
-            _sample = _sample / 10;
-            var _average = _sampling.ToDictionary(_Item => _Item.Key, _Item => Convert.ToInt64(_Item.Value.Average()));
-            var _ref = _average[Benchmark.None];
-            _average = _average.ToDictionary(_Item => _Item.Key, _Item => Convert.ToInt64(_sample * _ref / _Item.Value));
+            var _balancing = _sampling.ToDictionary(_Item => _Item.Key, _Item => Convert.ToInt64(_Item.Value.Average()));
+            var _authority = _balancing[Benchmark.None];
+            _balancing = _balancing.ToDictionary(_Item => _Item.Key, _Item => Convert.ToInt64(_sample * _authority / _Item.Value));
             var _random = new Random();
             for (var _loop = 0; _loop < 3; _loop++)
             {
@@ -159,7 +158,7 @@ namespace Benchmaker
                 foreach (var _item in _randomly)
                 {
                     var _index = 0L;
-                    var _iteration1 = _average[_item.Key];
+                    var _iteration1 = _balancing[_item.Key];
                     _action = _item.Value;
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
