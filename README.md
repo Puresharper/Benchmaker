@@ -63,8 +63,8 @@ _nuget : https://www.nuget.org/packages/Benchmaker_
 
 ## FAQ
 
-- How much iteration are used in loop to measure perdormance?
+_**- How much iteration are used in loop to measure perdormance?**_
 _Sampling is done on reference action to choose adequat iteration to keep a good measure without waiting so long_
 
-- What is the display number in log?
+_**- What is the display number in log?**_
 _Display number is an execution time in ms_
