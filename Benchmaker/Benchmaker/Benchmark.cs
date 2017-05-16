@@ -94,7 +94,7 @@ namespace Benchmaker
                 _action = _activate();
                 _stopwatch.Stop();
                 _buffer[_loop] = new KeyValuePair<string, Action>(_name, _action);
-                if (_log) { log($"        { _name } = { _stopwatch.ElapsedMilliseconds }"); }
+                if (_log) { log($"        { _name } = { _stopwatch.ElapsedMilliseconds } ms"); }
             }
             if (_log) { log("    Warmup"); }
             foreach (var _item in _buffer)
@@ -106,9 +106,9 @@ namespace Benchmaker
                 _stopwatch.Restart();
                 _action();
                 _stopwatch.Stop();
-                if (_log) { log($"        { _item.Key } = { _stopwatch.ElapsedMilliseconds }"); }
+                if (_log) { log($"        { _item.Key } = { _stopwatch.ElapsedMilliseconds } ms"); }
             }
-            if (_log) { log("    Loop"); }
+            if (_log) { log("    Loop : iteration / second"); }
             _action = _activation();
             var _sample = 100;
             _action();
@@ -158,22 +158,22 @@ namespace Benchmaker
                 foreach (var _item in _randomly)
                 {
                     var _index = 0L;
-                    var _iteration1 = _balancing[_item.Key];
+                    var _iteration = _balancing[_item.Key];
                     _action = _item.Value;
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                     GC.Collect();
                     _stopwatch.Restart();
-                    while (_index++ < _iteration1) { _action(); }
+                    while (_index++ < _iteration) { _action(); }
                     _stopwatch.Stop();
-                    if (_log) { log($"            { _item.Key } = { Convert.ToInt64(_sample * _stopwatch.ElapsedMilliseconds / _iteration1) }"); }
-                    _list.Add(new KeyValuePair<string, long>(_item.Key, Convert.ToInt64(_sample * _stopwatch.ElapsedTicks / _iteration1)));
+                    if (_log) { log($"            { _item.Key } = { Regex.Replace(Benchmark.Round(Convert.ToInt64(1000 * _iteration / _stopwatch.ElapsedMilliseconds)), "[^0-9]", ".") }"); }
+                    _list.Add(new KeyValuePair<string, long>(_item.Key, Convert.ToInt64(_sample * _stopwatch.ElapsedTicks / _iteration)));
                 }
             }
             var _dashboard = _list.GroupBy(_Measure => _Measure.Key, _Measure => _Measure.Value).Select(_Measure => new { Name = _Measure.Key, Duration = _Measure.Average() }).ToArray();
             var _native = _dashboard.Single(_Measure => _Measure.Name == Benchmark.None).Duration;
             var _dictionary = _dashboard.ToDictionary(_Measure => _Measure.Name, _Measure => Convert.ToInt64((_Measure.Duration * 100) / _native));
-            var _display = _dictionary.OrderBy(_Measure => _Measure.Value * (_Measure.Key == Benchmark.None ? 0 : 1)).ThenBy(_Measure => _Measure.Key).Select(_Measure => new { Name = _Measure.Key, Duration = Benchmark.Round(_Measure.Value) }).ToArray();
+            var _display = _dictionary.OrderBy(_Measure => _Measure.Value * (_Measure.Key == Benchmark.None ? 0 : 1)).ThenBy(_Measure => _Measure.Key).Select(_Measure => new { Name = _Measure.Key, Duration = Regex.Replace(Benchmark.Round(_Measure.Value), "[^0-9]", ".") }).ToArray();
             if (_log)
             {
                 var _max = _dictionary.Select(_Measure => _Measure.Key.Length).Max();
