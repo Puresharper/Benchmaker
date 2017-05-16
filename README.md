@@ -2,6 +2,8 @@
 
 Benchmark .NET code source to compare which is more efficient.
 
+_nuget : https://www.nuget.org/packages/Benchmaker_
+
 ## Example
 
 ### Code
@@ -58,3 +60,11 @@ Benchmark .NET code source to compare which is more efficient.
      [2] ConstructorInfo : 5 200 %
      =============================
     Press any key to continue...
+
+## FAQ
+
+- How much iteration are used in loop to measure perdormance?
+_Sampling is done on reference action to choose adequat iteration to keep a good measure without waiting so long_
+
+- What is the display number in log?
+_Display number is an execution time in ms_
