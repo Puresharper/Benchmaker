@@ -25,6 +25,39 @@ _nuget : https://www.nuget.org/packages/Benchmaker_
         var _arguments = new object[0];
         return new Action(() => { _constructor.Invoke(_arguments); });
     });
+    
+    //Add Lambda as alternative
+    _benchmark.Add("Lambda", () =>
+    {
+        var _activate = new Func<object>(() => new object());
+        return new Action(() => { _activate(); });
+    });
+
+    //Add Lambda Expression as alternative
+    _benchmark.Add("Expression", () =>
+    {
+        var _activate = Expression.Lambda<Func<object>>(Expression.New(typeof(object))).Compile();
+        return new Action(() => { _activate(); });
+    });
+
+    //Add FormatterServices.GetUninitializedObject as alternative
+    _benchmark.Add("FormatterServices", () =>
+    {
+        var _type = typeof(object);
+        return new Action(() => { FormatterServices.GetUninitializedObject(_type); });
+    });
+
+    //Add DynamicMethod as alternative
+    _benchmark.Add("DynamicMethod", () =>
+    {
+        var _type = typeof(object);
+        var _method = new DynamicMethod(string.Empty, _type, new Type[] { _type }, _type, true);
+        var _body = _method.GetILGenerator();
+        _body.Emit(OpCodes.Newobj, _type.GetConstructor(Type.EmptyTypes));
+        _body.Emit(OpCodes.Ret);
+        var _activate = _method.CreateDelegate(typeof(Func<object>), null) as Func<object>;
+        return new Action(() => { _activate(); });
+    });
 
     //Run benchmark.
     _benchmark.Run();
@@ -35,30 +68,54 @@ _nuget : https://www.nuget.org/packages/Benchmaker_
         Activation
             [none] = 0
             Activator = 0
-            ConstructorInfo = 1
+            ConstructorInfo = 0
+            Lambda = 0
+            Expression = 1
+            FormatterServices = 0
+            DynamicMethod = 0
         Warmup
             [none] = 0
             Activator = 0
             ConstructorInfo = 0
+            Lambda = 0
+            Expression = 0
+            FormatterServices = 0
+            DynamicMethod = 0
         Loop
             [1]
-                [none] = 62
-                Activator = 1188
-                ConstructorInfo = 3268
+                ConstructorInfo = 16571
+                DynamicMethod = 556
+                Activator = 5150
+                Expression = 548
+                FormatterServices = 6665
+                Lambda = 553
+                [none] = 380
             [2]
-                Activator = 990
-                ConstructorInfo = 3230
-                [none] = 62
+                [none] = 379
+                Expression = 600
+                ConstructorInfo = 18815
+                Activator = 6425
+                Lambda = 570
+                FormatterServices = 7127
+                DynamicMethod = 558
             [3]
-                ConstructorInfo = 2926
-                [none] = 53
-                Activator = 792
+                [none] = 382
+                Lambda = 562
+                Expression = 554
+                FormatterServices = 6157
+                DynamicMethod = 558
+                Activator = 5150
+                ConstructorInfo = 16604
 
-     =============================
-                  [none] :   100 %
-     [1]       Activator : 1 800 %
-     [2] ConstructorInfo : 5 200 %
-     =============================
+     ===============================
+                    [none] :   100 %
+     [1]     DynamicMethod :   140 %
+     [2]        Expression :   140 %
+     [3]            Lambda :   140 %
+     [4]         Activator : 1 400 %
+     [5] FormatterServices : 1 700 %
+     [6]   ConstructorInfo : 4 500 %
+     ===============================
     Press any key to continue...
 
 ## FAQ
