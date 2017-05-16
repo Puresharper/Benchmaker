@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Benchmaker
@@ -185,7 +187,7 @@ namespace Benchmaker
                 foreach (var _measure in _display) { Console.WriteLine($" { (++_index == 0 ? new string(' ', _size + 2) : string.Concat("[", _index, "]")) } { _measure.Name.PadLeft(_max, ' ') } : { _measure.Duration.PadLeft(_length) } %"); }
                 Console.WriteLine($" { _line }");
             }
-            return _display.ToDictionary(_Measure => _Measure.Name, _Measure => int.Parse(_Measure.Duration));
+            return _display.ToDictionary(_Measure => _Measure.Name, _Measure => int.Parse(Regex.Replace(_Measure.Duration, "[^0-9]", "")));
         }
     }
 }
