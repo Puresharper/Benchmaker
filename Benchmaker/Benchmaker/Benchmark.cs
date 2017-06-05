@@ -40,14 +40,14 @@ namespace Benchmaker
         static private long Average(IEnumerable<long> enumerable)
         {
             var _list = enumerable.ToList();
-            //var _average = Convert.ToInt64(_list.Average());
-            //var _count = 3;// Convert.ToInt32(_list.Count * 0.6);
-            //while (_list.Count > _count)
-            //{
-            //    var _max = 0;
-            //    for (var _index = 0; _index < _list.Count; _index++) { if (_list[_index] - _average > _list[_max] - _average) { _max = _index; } }
-            //    _list.RemoveAt(_max);
-            //}
+            var _average = Convert.ToInt64(_list.Average());
+            var _count = Convert.ToInt32(_list.Count * 0.8);
+            while (_list.Count > _count)
+            {
+                var _max = 0;
+                for (var _index = 0; _index < _list.Count; _index++) { if (_list[_index] - _average > _list[_max] - _average) { _max = _index; } }
+                _list.RemoveAt(_max);
+            }
             return Convert.ToInt64(_list.Average());
         }
 
