@@ -1,8 +1,6 @@
-# Benchmaker
+# Benchmaker [![NuGet](https://img.shields.io/nuget/v/benchmaker.svg)](https://www.nuget.org/packages/Benchmaker)
 
-Benchmark .NET code source to compare which is more efficient.
-
-_nuget : https://www.nuget.org/packages/Benchmaker_
+Benchmark .NET code source to compare which is more efficient. 
 
 ## Example
 
