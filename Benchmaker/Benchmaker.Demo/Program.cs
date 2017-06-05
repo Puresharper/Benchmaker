@@ -10,7 +10,6 @@ namespace Benchmaker.Demo
 {
     class Program
     {
-        [MTAThread]
         static void Main(string[] args)
         {
             //Create benchmark with object parameterless constructor call as reference action.
@@ -62,14 +61,13 @@ namespace Benchmaker.Demo
             _benchmark.Add("DynamicMethod", () =>
             {
                 var _type = typeof(object);
-                var _method = new DynamicMethod(string.Empty, _type, new Type[] { _type }, _type, true);
+                var _method = new DynamicMethod(string.Empty, _type, new Type[] { _type }, true);
                 var _body = _method.GetILGenerator();
                 _body.Emit(OpCodes.Newobj, _type.GetConstructor(Type.EmptyTypes));
                 _body.Emit(OpCodes.Ret);
                 var _activate = _method.CreateDelegate(typeof(Func<object>), null) as Func<object>;
                 return new Action(() => { _activate(); });
             });
-
 
             //Run benchmark.
             _benchmark.Run();
