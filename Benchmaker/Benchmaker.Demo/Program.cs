@@ -10,6 +10,7 @@ namespace Benchmaker.Demo
 {
     class Program
     {
+        [MTAThread]
         static void Main(string[] args)
         {
             //Create benchmark with object parameterless constructor call as reference action.
